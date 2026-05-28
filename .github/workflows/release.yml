@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to create (e.g. 1.0.0)'
+        description: 'Version to create (e.g. 0.0.3)'
         required: true
-        default: '1.0.0'
+        default: '0.0.3'
 
 jobs:
   release:
@@ -18,21 +18,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Bump version
-        id: tag_action
-        uses: mathieudutour/github-tag-action@v6.2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # If the user provides a version in input, we use that.
-          # Otherwise, the action will automatically determine the next version.
-          # Note: v6.2 uses specific logic for bumping.
-          # To override and force a specific tag, we can use the action's options.
-
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # The tag_action output 'new_tag' contains the version created
-          gh release create ${{ steps.tag_action.outputs.new_tag }} \
-            --title "Release ${{ steps.tag_action.outputs.new_tag }}" \
-            --notes "Release created using mathieudutour/github-tag-action. Version: ${{ steps.tag_action.outputs.new_tag }}"
+          # Use the version provided in the workflow input
+          VERSION=${{ github.event.inputs.version }}
+          echo "Creating release for version: $VERSION"
+          
+          gh release create $VERSION \
+            --title "Release $VERSION" \
+            --notes "Manual release version $VERSION"
