@@ -2,12 +2,10 @@ name: Bump version
 on:
   push:
     branches:
-      - main
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-       contents: write # <--- THIS IS THE FIX
     steps:
       - uses: actions/checkout@v4
       - name: Bump version and push tag
